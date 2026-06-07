@@ -28,7 +28,7 @@ async function createApp() {
       },
       referrerPolicy: { policy: "strict-origin-when-cross-origin" },
       xFrameOptions: { action: "deny" },
-      crossOriginResourcePolicy: { policy: "same-origin" },
+      crossOriginResourcePolicy: { policy: "cross-origin" },
       crossOriginOpenerPolicy: { policy: "same-origin" },
     })
   );
