@@ -13,11 +13,6 @@ export class bioService {
                 _type: 'bio',
                 _id: '23919',
                 content: dto.content,
-                slug: {
-                    _type: 'slug',
-                    current: 'Bio'
-                },
-                publishedAt: new Date().toLocaleDateString('en-US')
             })
         } catch (error) {
             throw new UnauthorizedException ()
@@ -37,11 +32,6 @@ export class bioService {
             .patch('23919')
             .set({
                 content: newdto.content,
-                slug: {
-                    _type: 'slug',
-                    current: 'Bio',
-                },
-                publishedAt: new Date().toLocaleDateString('en-US')
             }).commit()
         } catch (error) {
             throw new Error ("Error updating bio")
