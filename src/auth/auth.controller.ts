@@ -1,4 +1,4 @@
-import { Controller, Post, HttpCode, Body, UseGuards} from "@nestjs/common";
+import { Controller, Post, HttpCode, Body, UseGuards, Request } from "@nestjs/common";
 import { authService } from "./auth.service";
 import { authDTO, newAuthDTO } from "./auth.dto";
 import { AuthGuard } from "./auth.guard";
@@ -47,8 +47,8 @@ export class authController {
     @Post('change-email')
     @UseGuards(AuthGuard)
     @HttpCode(200)
-    async changeEmail (@Body() body: { email: string; token: string; new_email: string }) {
-        return this.auth.changeEmail(body.email, body.token, { new_email: body.new_email } as newAuthDTO)
+    async changeEmail (@Request() req: any, @Body() body: { new_email: string }) {
+        return this.auth.changeEmail(req.user.id, body.new_email)
     }
 
     @Post('change-password')
