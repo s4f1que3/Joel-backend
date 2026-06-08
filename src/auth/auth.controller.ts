@@ -54,7 +54,7 @@ export class authController {
     @Post('change-password')
     @UseGuards(AuthGuard)
     @HttpCode(200)
-    async changePassword (@Body() body: { email: string; token: string; password: string; new_password: string }) {
-        return this.auth.changePassword(body.email, body.token, body.password, { new_password: body.new_password } as newAuthDTO)
+    async changePassword (@Body() body: { email: string; token: string; new_password: string }) {
+        return this.auth.changePassword(body.email, body.token, { new_password: body.new_password } as newAuthDTO)
     }
 }
