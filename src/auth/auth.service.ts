@@ -47,6 +47,7 @@ export class authService {
         })
 
         if(error) {
+            console.error('[verifyOTP] error:', error.message)
             return false
         }
 
@@ -78,9 +79,12 @@ export class authService {
             email: dto.new_email
         })
 
-        if(error) throw new Error(error.message)
+        if(error) {
+            console.error('[changeEmail] updateUser error:', error.message)
+            throw new Error(error.message)
+        }
         return data
-    
+
     }
 
     async refreshSession (refreshToken: string) {
