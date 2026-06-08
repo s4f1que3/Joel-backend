@@ -15,7 +15,7 @@ const supabase_js_1 = require("@supabase/supabase-js");
 let supabaseService = class supabaseService {
     client;
     constructor() {
-        this.client = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.PUBLISHABLE_KEY);
+        this.client = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SERVICE_ROLE_KEY);
     }
     get db() {
         return this.client;
