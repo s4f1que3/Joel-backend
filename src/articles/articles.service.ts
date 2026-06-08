@@ -37,16 +37,19 @@ export class articlesService {
             },
             publishedAt: new Date().toLocaleDateString('en-US'),
             images: imageRefs.map(asset => ({
+                _key: crypto.randomUUID(),
                 _type: 'image',
-                asset: { _type: 'reference', _ref: asset._id }
+                asset: { _type: 'reference', _ref: asset._id, _key: crypto.randomUUID() }
             })),
             thumbnail: thumbnailRefs.map(asset => ({
+                _key: crypto.randomUUID(),
                 _type: 'image',
-                asset: { _type: 'reference', _ref: asset._id }
+                asset: { _type: 'reference', _ref: asset._id, _key: crypto.randomUUID() }
             })),
             Files: fileRefs.map(asset => ({
+                _key: crypto.randomUUID(),
                 _type: 'file',
-                asset: { _type: 'reference', _ref: asset._id }
+                asset: { _type: 'reference', _ref: asset._id, _key: crypto.randomUUID() }
             }))
         });
     }
@@ -84,16 +87,19 @@ export class articlesService {
                 publishedAt: new Date().toLocaleDateString('en-US')
             })
             .append('images', imageRefs.map(asset => ({
+                _key: crypto.randomUUID(),
                 _type: 'image',
-                asset: { _type: 'reference', _ref: asset._id }
+                asset: { _type: 'reference', _ref: asset._id, _key: crypto.randomUUID() }
             })))
             .append('images', thumbnailRefs.map(asset => ({
+                _key: crypto.randomUUID(),
                 _type: 'image',
-                asset: { _type: 'reference', _ref: asset._id }
+                asset: { _type: 'reference', _ref: asset._id, _key: crypto.randomUUID() }
             })))
             .append('Files', fileRefs.map(asset => ({
+                _key: crypto.randomUUID(),
                 _type: 'file',
-                asset: { _type: 'reference', _ref: asset._id }
+                asset: { _type: 'reference', _ref: asset._id, _key: crypto.randomUUID() }
             })))
         .commit();
     }

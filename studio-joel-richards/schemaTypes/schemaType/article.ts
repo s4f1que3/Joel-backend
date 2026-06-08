@@ -28,6 +28,20 @@ export const articleType = defineType({
             type: 'image'
         }),
         defineField({
+            name: 'publishedAt',
+            title: 'Published At',
+            type: 'datetime'
+        }),
+        defineField({
+            name: 'slug',
+            title: 'Slug',
+            type: 'slug',
+            options: {
+                source: 'Title',
+                maxLength: 96
+            }
+        }),
+        defineField({
             name: 'images',
             title: 'images',
             type: 'array',
