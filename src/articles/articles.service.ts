@@ -75,8 +75,43 @@ export class articlesService {
             )
         );
 
-        const removeImageKeys: string[] = dto.remove_image_keys ? JSON.parse(dto.remove_image_keys) : [];
-        const removeFileKeys: string[] = dto.remove_file_keys ? JSON.parse(dto.remove_file_keys) : [];
+        const removeImageUrls: string[] = dto.remove_image_urls ? JSON.parse(dto.remove_image_urls) : [];
+        const removeFileUrls: string[] = dto.remove_file_urls ? JSON.parse(dto.remove_file_urls) : [];
+
+        // Pre-fetch current arrays so we can rebuild them after removals
+        const current = await sanityServiceWithoutPublished.fetch(
+            '*[_type == "article" && _id == $id][0] { "imgs": images[]{ _key, "assetId": asset->_id, "url": asset->url }, "fls": Files[]{ _key, "assetId": asset->_id, "url": asset->url } }',
+            { id }
+        );
+
+        const keptImages = (current?.imgs ?? []).filter((img: { url: string }) => !removeImageUrls.includes(img.url));
+        const keptFiles = (current?.fls ?? []).filter((f: { url: string }) => !removeFileUrls.includes(f.url));
+
+        const newImages = [
+            ...keptImages.map((img: { _key: string | null; assetId: string }) => ({
+                _key: img._key ?? crypto.randomUUID(),
+                _type: 'image',
+                asset: { _type: 'reference', _ref: img.assetId }
+            })),
+            ...imageRefs.map(asset => ({
+                _key: crypto.randomUUID(),
+                _type: 'image',
+                asset: { _type: 'reference', _ref: asset._id }
+            }))
+        ];
+
+        const newFiles = [
+            ...keptFiles.map((f: { _key: string | null; assetId: string }) => ({
+                _key: f._key ?? crypto.randomUUID(),
+                _type: 'file',
+                asset: { _type: 'reference', _ref: f.assetId }
+            })),
+            ...fileRefs.map(asset => ({
+                _key: crypto.randomUUID(),
+                _type: 'file',
+                asset: { _type: 'reference', _ref: asset._id }
+            }))
+        ];
 
         let patchBuilder = sanityServiceWithoutPublished.patch(id)
             .set({
@@ -84,7 +119,9 @@ export class articlesService {
                 content: dto.new_content,
                 pinned: dto.new_pinned,
                 slug: { _type: 'slug', current: dto.new_title },
-                publishedAt: new Date().toLocaleDateString('en-US')
+                publishedAt: new Date().toLocaleDateString('en-US'),
+                images: newImages,
+                Files: newFiles
             });
 
         if (dto.remove_thumbnail === 'true') {
@@ -97,28 +134,6 @@ export class articlesService {
                     asset: { _type: 'reference', _ref: asset._id }
                 }))
             });
-        }
-
-        if (removeImageKeys.length > 0) {
-            patchBuilder = patchBuilder.unset(removeImageKeys.map(k => `images[_key == "${k}"]`));
-        }
-        if (imageRefs.length > 0) {
-            patchBuilder = patchBuilder.append('images', imageRefs.map(asset => ({
-                _key: crypto.randomUUID(),
-                _type: 'image',
-                asset: { _type: 'reference', _ref: asset._id }
-            })));
-        }
-
-        if (removeFileKeys.length > 0) {
-            patchBuilder = patchBuilder.unset(removeFileKeys.map(k => `Files[_key == "${k}"]`));
-        }
-        if (fileRefs.length > 0) {
-            patchBuilder = patchBuilder.append('Files', fileRefs.map(asset => ({
-                _key: crypto.randomUUID(),
-                _type: 'file',
-                asset: { _type: 'reference', _ref: asset._id }
-            })));
         }
 
         return patchBuilder.commit();
@@ -152,7 +167,7 @@ export class articlesService {
     async findById (id: string) {
         try {
             const article = await sanityService.fetch(
-                '*[_type == "article" && _id == $id][0] { ..., "thumbnailUrl": thumbnail[0].asset->url, "thumbnailKey": thumbnail[0]._key, "imageItems": images[]{ _key, "url": asset->url }, "fileItems": Files[]{ _key, "url": asset->url, "originalFilename": asset->originalFilename } }',
+                '*[_type == "article" && _id == $id][0] { ..., "thumbnailUrl": thumbnail[0].asset->url, "imageItems": images[]{ "url": asset->url }, "fileItems": Files[]{ "url": asset->url, "originalFilename": asset->originalFilename } }',
                 {id}
             )
             return article
