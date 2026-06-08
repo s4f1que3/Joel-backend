@@ -144,7 +144,7 @@ export class articlesService {
     async findAll () {
         try {
             const articles = await sanityService.fetch(
-                '*[_type == "article"] { ..., "thumbnailUrl": thumbnail[0].asset->url }'
+                '*[_type in ["article", "uploaded_article"]] { ..., "thumbnailUrl": thumbnail[0].asset->url }'
             )
             return articles
         } catch (error) {
@@ -155,7 +155,7 @@ export class articlesService {
     async findBySlug (slug : string) {
         try {
             const article = await sanityService.fetch(
-                '*[_type == "article" && slug.current == $slug][0] { ..., "thumbnailUrl": thumbnail[0].asset->url }',
+                '*[_type in ["article", "uploaded_article"] && slug.current == $slug][0] { ..., "thumbnailUrl": thumbnail[0].asset->url }',
                 {slug}
             )
             return article
@@ -167,7 +167,7 @@ export class articlesService {
     async findById (id: string) {
         try {
             const article = await sanityService.fetch(
-                '*[_type == "article" && _id == $id][0] { ..., "thumbnailUrl": thumbnail[0].asset->url, "imageItems": images[]{ "url": asset->url }, "fileItems": Files[]{ "url": asset->url, "originalFilename": asset->originalFilename } }',
+                '*[_type in ["article", "uploaded_article"] && _id == $id][0] { ..., "thumbnailUrl": thumbnail[0].asset->url, "imageItems": images[]{ "url": asset->url }, "fileItems": Files[]{ "url": asset->url, "originalFilename": asset->originalFilename } }',
                 {id}
             )
             return article
@@ -180,7 +180,7 @@ export class articlesService {
 
     async pinArticle (id: string) {
         try {
-            const existing = await sanityService.fetch('*[_type == "article" && pinned == true][0]')
+            const existing = await sanityService.fetch('*[_type in ["article", "uploaded_article"] && pinned == true][0]')
             if (existing && existing._id !== id) {
                 await sanityService.patch(existing._id).set({ pinned: false }).commit()
             }
@@ -194,7 +194,7 @@ export class articlesService {
 
     async unpinArticle (id: string) {
         try {
-            const existing = await sanityService.fetch('*[_type == "article" && pinned == true][0]')
+            const existing = await sanityService.fetch('*[_type in ["article", "uploaded_article"] && pinned == true][0]')
             if(!existing) {
                 throw new Error ("No existing pinned article under this ID")
             } else {
@@ -213,7 +213,7 @@ export class articlesService {
     async getPinned () {
         try {
             const pinnedArticle = await sanityService.fetch(
-                '*[_type == "article" && pinned == true][0] { ..., "thumbnailUrl": thumbnail[0].asset->url }'
+                '*[_type in ["article", "uploaded_article"] && pinned == true][0] { ..., "thumbnailUrl": thumbnail[0].asset->url }'
             )
 
             return pinnedArticle

@@ -12,12 +12,21 @@ export const uploadedArticlesType = defineType({
             type: 'string',
             validation: (Rule) => Rule.required()
         }),
-
         defineField({
             name: 'file',
             title: 'file',
             type: 'file',
             validation: (Rule) => Rule.required()
+        }),
+        defineField({
+            name: 'publishedAt',
+            title: 'Published At',
+            type: 'datetime'
+        }),
+        defineField({
+            name: 'slug',
+            title: 'Slug',
+            type: 'slug'
         }),
         defineField({
             name: 'pinned',
