@@ -34,7 +34,7 @@ export class articlesController {
     @Patch('update/:id')
     @UseGuards(AuthGuard)
     @UseInterceptors(FileFieldsInterceptor([
-        {name: 'thumbnail', maxCount: 1}
+        {name: 'thumbnail', maxCount: 1},
         {name: 'images', maxCount: 5},
         {name: 'files', maxCount: 5}
     ]))
