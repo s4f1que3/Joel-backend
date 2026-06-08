@@ -39,5 +39,12 @@ export class updateArticleDTO {
     @IsBoolean()
     new_pinned: boolean
 
-    
+    @IsOptional()
+    remove_image_keys?: string;
+
+    @IsOptional()
+    remove_file_keys?: string;
+
+    @IsOptional()
+    remove_thumbnail?: string;
 }
