@@ -71,11 +71,11 @@ export class authService {
 
     //// send otp will be used for this
 
-    async changeEmail (email: string, token: string, dto: newAuthDTO) {
+    async changeEmail (id: string, email: string, token: string, dto: newAuthDTO) {
         const verifiedOTP = await this.verifyOTP(email, token)
         if(!verifiedOTP) throw new Error('Invalid OTP')
 
-        const { data, error} = await this.supabase.db.auth.updateUser({
+        const { data, error} = await this.supabase.db.auth.admin.updateUserById(id, {
             email: dto.new_email
         })
 

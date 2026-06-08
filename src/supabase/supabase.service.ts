@@ -8,7 +8,7 @@ export class supabaseService {
     constructor() {
         this.client = createClient(
             process.env.SUPABASE_URL!,
-            process.env.PUBLISHABLE_KEY!,
+            process.env.SERVICE_ROLE_KEY!,
             { auth: { flowType: 'implicit' } }
         )
     }
