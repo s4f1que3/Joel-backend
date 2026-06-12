@@ -17,6 +17,7 @@ export class AuthGuard implements CanActivate{
         console.log('guard error', error)
         console.log('guard user:', data?.user)
         if (error || !data.user) throw new UnauthorizedException()
+        if(data.user.id !== process.env.OWNER_ID) throw new UnauthorizedException()
         
         request.user = data.user
         return true

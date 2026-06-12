@@ -1,4 +1,5 @@
-import { Controller, Post, HttpCode, Body, UseGuards} from "@nestjs/common";
+import { Controller, Post, HttpCode, Body, UseGuards, Req} from "@nestjs/common";
+import { Request } from "express";
 import { authService } from "./auth.service";
 import { authDTO, newAuthDTO } from "./auth.dto";
 import { AuthGuard } from "./auth.guard";
@@ -28,33 +29,38 @@ export class authController {
     @Post('send-otp')
     @UseGuards(AuthGuard)
     @HttpCode(200)
-    async sendOTP (@Body() dto: authDTO) {
-        return this.auth.sendOtp(dto.email)
+    async sendOTP (@Req() req: Request & {user : any}, @Body() dto: authDTO) {
+        const user = req.user as any
+        return this.auth.sendOtp(user.email)
     }
 
     @Post('verify-otp')
     @HttpCode(200)
-    async verifyOTP (@Body() dto: authDTO) {
-        return this.auth.verifyOTP(dto.email, dto.token)
+    async verifyOTP (@Req() req: Request & {user: any}, @Body() dto: authDTO) {
+        const user = req.user as any
+        return this.auth.verifyOTP(user.email, dto.token)
     }
 
     @Post('verify-password')
     @HttpCode(200)
-    async verifyPassword (@Body() dto: authDTO) {
-        return this.auth.verfiyPassword(dto.email, dto.password)
+    async verifyPassword (@Req() req: Request & {user: any}, @Body() dto: authDTO) {
+        const user = req.user as any
+        return this.auth.verfiyPassword(user.email, dto.password)
     }
 
     @Post('change-email')
     @UseGuards(AuthGuard)
     @HttpCode(200)
-    async changeEmail (@Body() body: {id: string, email: string; token: string; new_email: string }) {
-        return this.auth.changeEmail(body.id, body.email, body.token, { new_email: body.new_email } as newAuthDTO)
+    async changeEmail (@Req() req: Request & {user: any}, @Body() body: {id: string, email: string; token: string; new_email: string }) {
+        const user = req.user as any
+        return this.auth.changeEmail(user.id, user.email, body.token, { new_email: body.new_email } as newAuthDTO)
     }
 
     @Post('change-password')
     @UseGuards(AuthGuard)
     @HttpCode(200)
-    async changePassword (@Body() body: { email: string; token: string; new_password: string }) {
-        return this.auth.changePassword(body.email, body.token, { new_password: body.new_password } as newAuthDTO)
+    async changePassword (@Req() req: Request & {user: any}, @Body() body: { email: string; token: string; new_password: string }) {
+        const user = req.user as any
+        return this.auth.changePassword(user.email, body.token, { new_password: body.new_password } as newAuthDTO)
     }
 }

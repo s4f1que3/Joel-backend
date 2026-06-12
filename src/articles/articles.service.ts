@@ -54,7 +54,7 @@ export class articlesService {
         });
     }
 
-    //// UPDATE ARTICLES
+    //// UPDATE ARTICLE
 
     async updateArticle(id: string, dto: updateArticleDTO, uploadedFiles: { images?: Express.Multer.File[], files?: Express.Multer.File[], thumbnail?: Express.Multer.File[] }) {
         const imageRefs = await Promise.all(
